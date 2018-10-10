@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "297564513261",
+    "firebase_url": "https://lendmanager-e0992.firebaseio.com",
+    "project_id": "lendmanager-e0992",
+    "storage_bucket": "lendmanager-e0992.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:297564513261:android:09623e5700a05213",
+        "android_client_info": {
+          "package_name": "com.example.safdarali.lendmanager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "297564513261-df3jc2slo3gug572g6t6igj18jel6648.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.safdarali.lendmanager",
+            "certificate_hash": "c0923f5b27ef124439ca2aca167197979ed7b1e8"
+          }
+        },
+        {
+          "client_id": "297564513261-gdoalur6fc801jrs5t0uvncjhk6vl5rf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_cVs-5f0y6TQ2RrFKZrnT2ufjKe0LGB0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "297564513261-gdoalur6fc801jrs5t0uvncjhk6vl5rf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

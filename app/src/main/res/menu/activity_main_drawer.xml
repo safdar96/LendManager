@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:showIn="navigation_view">
+
+    <group >
+        <item
+            android:id="@+id/nav_lend_amount"
+            android:icon="@drawable/ic_add_green_round"
+            app:itemIconTint="@color/colorGreen"
+            android:title="Lend amount:       Rs." />
+        <item
+            android:id="@+id/nav_borrow_amount"
+            app:itemIconTint="@color/colorRed"
+            android:icon="@drawable/ic_sub_red_round"
+            android:title="Borrow amount:   Rs." />
+        <item
+            android:id="@+id/nav_slideshow"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="Slideshow" />
+        <item
+            android:id="@+id/nav_manage"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Tools" />
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Share" />
+            <item
+                android:id="@+id/sign_out"
+                android:icon="@drawable/ic_action_sign_out"
+                android:title="Sign out" />
+        </menu>
+    </item>
+
+</menu>
