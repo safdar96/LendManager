@@ -16,13 +16,13 @@
             android:icon="@drawable/ic_sub_red_round"
             android:title="Borrow amount:   Rs." />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
+            android:id="@+id/backup"
+            android:icon="@drawable/ic_action_backup"
+            android:title="Backup" />
         <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:id="@+id/restore"
+            android:icon="@drawable/ic_action_restore"
+            android:title="Restore" />
     </group>
 
     <item android:title="Communicate">

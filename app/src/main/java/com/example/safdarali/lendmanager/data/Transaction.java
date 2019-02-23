@@ -13,6 +13,9 @@ public class Transaction {
         mDate = date;
     }
 
+    public int getId() {
+        return mId;
+    }
     public String getExpense() {
         return mExpense;
     }

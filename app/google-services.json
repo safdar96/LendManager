@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "297564513261-354hp2k0c2rnd94a8ao684msas1kq60f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.safdarali.lendmanager",
+            "certificate_hash": "42c8e7f96bf54a0e4bbc113bc0614a2228dfc617"
+          }
+        },
+        {
           "client_id": "297564513261-gdoalur6fc801jrs5t0uvncjhk6vl5rf.apps.googleusercontent.com",
           "client_type": 3
         }

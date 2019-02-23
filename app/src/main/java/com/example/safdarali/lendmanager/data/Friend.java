@@ -5,6 +5,12 @@ public class Friend {
     private String mName;
     private double mAmount;
 
+    public Friend(int id, String name, double amount) {
+        mId = id;
+        mName = name;
+        mAmount = amount;
+    }
+
     public String getName() {
         return mName;
     }

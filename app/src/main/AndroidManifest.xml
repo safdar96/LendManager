@@ -9,10 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".FriendTransactionActivity"></activity>
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,9 +23,9 @@
         </activity>
 
         <provider
-            android:authorities="com.example.safdarali.lendmanager"
             android:name=".provider.LendManagerProvider"
-            android:exported="false"/>
+            android:authorities="com.example.safdarali.lendmanager"
+            android:exported="false" />
     </application>
 
 </manifest>

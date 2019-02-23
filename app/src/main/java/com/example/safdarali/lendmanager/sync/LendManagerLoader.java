@@ -1,15 +1,13 @@
 package com.example.safdarali.lendmanager.sync;
 
-import android.content.ContentValues;
+import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
-import com.example.safdarali.lendmanager.fragments.FriendTransactionsFragment;
-import com.example.safdarali.lendmanager.fragments.FriendsListFragment;
+import com.example.safdarali.lendmanager.MainActivity;
 import com.example.safdarali.lendmanager.provider.LendManagerContract;
 
-public class LendManagerLoader extends android.support.v4.content.AsyncTaskLoader<Cursor> {
+public class LendManagerLoader extends AsyncTaskLoader<Cursor> {
     private int mFriendId;
     int mLoaderId;
     public LendManagerLoader(Context context, int loaderId) {
@@ -31,7 +29,7 @@ public class LendManagerLoader extends android.support.v4.content.AsyncTaskLoade
     
     @Override
     public Cursor loadInBackground() {
-        if (mLoaderId == FriendsListFragment.FRIENDS_LIST_LOADER) {
+        if (mLoaderId == MainActivity.FRIENDS_LIST_LOADER) {
             return getContext().getContentResolver().query(LendManagerContract.Friends.CONTENT_URI,
                     null,
                     null,

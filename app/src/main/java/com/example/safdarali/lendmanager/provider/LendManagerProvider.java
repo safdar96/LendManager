@@ -10,11 +10,15 @@ import android.media.UnsupportedSchemeException;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.text.LoginFilter;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.example.safdarali.lendmanager.data.Friend;
 import com.example.safdarali.lendmanager.data.Transaction;
+
+import java.util.ArrayList;
 
 public class LendManagerProvider extends ContentProvider {
 
@@ -117,28 +121,10 @@ public class LendManagerProvider extends ContentProvider {
                 id = db.insert(LendManagerContract.Transactions.TRANSACTIONS_TABLE_NAME, null, contentValues);
                 if (id > 0) {
                     retUri = ContentUris.withAppendedId(LendManagerContract.Transactions.CONTENT_URI, id);
-                    //getting the id of friend with whom the transaction is made
+                    //getting the friendId with whom the transaction is made
                     int friendId = contentValues.getAsInteger(LendManagerContract.Transactions.FRIEND_ID);
-                    Cursor cursor = query(LendManagerContract.Friends.CONTENT_URI,
-                            null,
-                            LendManagerContract.Friends.FRIEND_ID + " = " + friendId,
-                            null,
-                            null);
-
-                    if (cursor.moveToNext()) {
-                        ContentValues cv = new ContentValues();
-                        //getting the current total of friend
-                        double amount = cursor.getDouble(cursor.getColumnIndex(LendManagerContract.Friends.AMOUNT));
-                        double cost = contentValues.getAsDouble(LendManagerContract.Transactions.AMOUNT);
-                        amount += cost;
-                        cv.put(LendManagerContract.Friends.AMOUNT, amount);
-                        //updating the amount of friend in friends table
-                        update(LendManagerContract.Friends.CONTENT_URI,
-                                cv,
-                                LendManagerContract.Friends.FRIEND_ID + " = " + friendId,
-                                null);
-                        updateUsersBalance(db, cost);
-                    }
+                    float cost = contentValues.getAsFloat(LendManagerContract.Transactions.AMOUNT);
+                    updateFriendsBalance(friendId, cost);
                 } else {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
@@ -150,53 +136,47 @@ public class LendManagerProvider extends ContentProvider {
     }
 
 
-    private void updateUsersBalance(SQLiteDatabase db, double cost) {
-        Cursor cursor1 = db.query(LendManagerContract.MyAccount.MY_ACCOUNT_TABLE_NAME,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null);
-        double balance;
-        if (cursor1.moveToNext()) {
-            //getting the users current lend amount
-            balance = cursor1.getDouble(cursor1.getColumnIndex(LendManagerContract.MyAccount.USER_BALANCE));
-            ContentValues cv1 = new ContentValues();
-            balance += cost;
-            cv1.put(LendManagerContract.MyAccount.USER_BALANCE, balance);
-            //updating the lend amount in MyAccount Table
-            update(LendManagerContract.MyAccount.CONTENT_URI,
-                    cv1,
-                    null,
-                    null);
-        }
-    }
-
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] strings) {
         final SQLiteDatabase db = mLendManagerDBHelper.getWritableDatabase();
         int matchUri = sUriMatcher.match(uri);
-
+        float correction;
+        int x;
         switch (matchUri) {
             case FRIENDS:
-                Cursor cursor = db.query(LendManagerContract.Friends.FRIENDS_TABLE_NAME,
+                //getting the friends which are to be deleted
+                Cursor cursor = query(LendManagerContract.Friends.CONTENT_URI,
                         null,
                         selection,
-                        null,
-                        null,
-                        null,
+                        strings,
                         null);
-                if (cursor.moveToNext()) {
-                    double amount = cursor.getDouble(cursor.getColumnIndex(LendManagerContract.Friends.AMOUNT));
-                    if (amount != 0) {
-                        updateUsersBalance(db, amount*-1);
-                    }
+                correction = 0;
+                while (cursor != null && cursor.moveToNext()) {
+                    correction -= cursor.getFloat(cursor.getColumnIndex(LendManagerContract.Friends.AMOUNT));
                 }
-                return db.delete(LendManagerContract.Friends.FRIENDS_TABLE_NAME,
-                        selection,
-                        strings);
+                cursor.close();
+                x =  db.delete(LendManagerContract.Friends.FRIENDS_TABLE_NAME,selection,strings);
+                updateUsersBalance(correction);
+                return x;
 
+            case TRANSACTIONS:
+                //getting the transactions which are to be deleted
+                Cursor cur = query(LendManagerContract.Transactions.CONTENT_URI, null,
+                        LendManagerContract.Transactions.TRANSACTION_ID + " In (" +
+                                new String(new char[strings.length - 1]).replace("\0", "?,") + "?)",
+                        strings,
+                        null);
+                correction = 0;
+                int friendId = -1;
+                while (cur != null && cur.moveToNext()) {
+                    friendId = cur.getInt(cur.getColumnIndex(LendManagerContract.Transactions.FRIEND_ID));
+                    correction -= cur.getFloat(cur.getColumnIndex(LendManagerContract.Transactions.AMOUNT));
+                }
+                cur.close();
+                x = db.delete(LendManagerContract.Transactions.TRANSACTIONS_TABLE_NAME, selection, strings);
+                //getting the friends amount which is to be updated
+                updateFriendsBalance(friendId, correction);
+                return x;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -221,6 +201,47 @@ public class LendManagerProvider extends ContentProvider {
                         selectionArgs);
             default:
                 throw new UnsupportedOperationException("Unknown Uri " + uri);
+        }
+    }
+
+    private void updateFriendsBalance(int friendId, float cost) {
+        Cursor cur = query(LendManagerContract.Friends.CONTENT_URI,
+                null,
+                LendManagerContract.Friends.FRIEND_ID + " = " + friendId,
+                null,
+                null);
+
+        if (cur != null && cur.moveToNext()) {
+            float amount = cur.getFloat(cur.getColumnIndex(LendManagerContract.Friends.AMOUNT));
+            cur.close();
+            ContentValues cv = new ContentValues();
+            cv.put(LendManagerContract.Friends.AMOUNT, amount + cost);
+            update(LendManagerContract.Friends.CONTENT_URI,
+                    cv,
+                    LendManagerContract.Friends.FRIEND_ID + " = " + friendId,
+                    null);
+        }
+        updateUsersBalance(cost);
+    }
+
+    private void updateUsersBalance(float correction) {
+        Cursor cursor = query(LendManagerContract.MyAccount.CONTENT_URI,
+                null,
+                null,
+                null,
+                null);
+        double balance;
+        //getting the users current lend amount
+        if (cursor != null && cursor.moveToNext()) {
+            balance = cursor.getFloat(cursor.getColumnIndex(LendManagerContract.MyAccount.USER_BALANCE));
+            ContentValues cv1 = new ContentValues();
+            cv1.put(LendManagerContract.MyAccount.USER_BALANCE, balance + correction);
+            //updating the lend amount in MyAccount Table
+            update(LendManagerContract.MyAccount.CONTENT_URI,
+                    cv1,
+                    null,
+                    null);
+            cursor.close();
         }
     }
 }

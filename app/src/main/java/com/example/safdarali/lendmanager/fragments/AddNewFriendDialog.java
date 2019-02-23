@@ -7,14 +7,20 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.safdarali.lendmanager.R;
+import com.example.safdarali.lendmanager.adapters.FriendsListAdapter;
+import com.example.safdarali.lendmanager.data.Friend;
 import com.example.safdarali.lendmanager.provider.LendManagerContract;
 
 public class AddNewFriendDialog extends android.support.v4.app.DialogFragment {
+
+    FriendsListAdapter mAdapter;
+    private int mSortBy;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -35,7 +41,7 @@ public class AddNewFriendDialog extends android.support.v4.app.DialogFragment {
                     Toast.makeText(getContext(), "Enter some name please!", Toast.LENGTH_SHORT).show();
                 } else {
                     name.trim();
-                    name = name.substring(0,1).toUpperCase() + name.substring(1, name.length());
+                    name = name.substring(0, 1).toUpperCase() + name.substring(1, name.length());
                     ContentValues cv = new ContentValues();
                     cv.put(LendManagerContract.Friends.FRIEND_NAME, name);
                     cv.put(LendManagerContract.Friends.AMOUNT, 0);
@@ -43,7 +49,9 @@ public class AddNewFriendDialog extends android.support.v4.app.DialogFragment {
                     if (uri == null) {
                         Toast.makeText(getContext(), "entry failed", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(getContext(), name + " is added", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), name + " is added" , Toast.LENGTH_SHORT).show();
+                        mAdapter.addFriend(new Friend(Integer.parseInt(uri.getLastPathSegment()), name, 0));
+                        mAdapter.sortFriends(mSortBy);
                     }
                     dismiss();
                 }
@@ -57,5 +65,10 @@ public class AddNewFriendDialog extends android.support.v4.app.DialogFragment {
             }
         });
         return builder.create();
+    }
+
+    public void passAdapter(FriendsListAdapter adapter, int sortBy) {
+        mAdapter = adapter;
+        mSortBy = sortBy;
     }
 }
